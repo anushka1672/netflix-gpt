@@ -6,7 +6,7 @@ function App() {
 
   return (
     <div className='bg-amber-200'>
-      hello
+      hello anushka !
     </div>
   )
 }
