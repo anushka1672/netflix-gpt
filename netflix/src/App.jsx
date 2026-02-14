@@ -1,14 +1,8 @@
-
-import './App.css'
+import "./App.css";
+import Body from "./components/Body";
 
 function App() {
-
-
-  return (
-    <div className='bg-amber-200'>
-      hello anushka !
-    </div>
-  )
+  return <Body/>
 }
 
-export default App
+export default App;
