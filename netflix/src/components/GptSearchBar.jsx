@@ -1,115 +1,136 @@
-import React, { useRef, useState } from 'react';
-import {  language } from '../utils/constant';
-import { useDispatch, useSelector } from 'react-redux';
-import MovieList from './MovieList';
-import { AddSearchedMovies } from '../utils/gptSlice';
-// import { ai } from '../utils/geminiAi';
+import React, { useRef, useState } from "react";
+import { language } from "../utils/constant";
+import { useDispatch, useSelector } from "react-redux";
+import MovieList from "./MovieList";
+import { AddSearchedMovies } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
-  const[title,setTitle] = useState("")
+  const [title, setTitle] = useState("");
+
   const dispatch = useDispatch();
-    const userSelectedLang = useSelector((state)=>state.config.Lang)
-    const searchedMovies = useSelector((state)=>state.gpt.searchedMovies)
-    console.log("store se li h movies",searchedMovies);
-    
-    console.log("userSelectedLang",userSelectedLang)
-    
-    const currentLang = language[userSelectedLang] 
-    console.log("currentLang ",currentLang );
 
-    const SearchText = useRef(null);
-    // const [recommendations, setRecommendations] = useState([]);
-    
-const TMDB_TOKEN = import.meta.env.VITE_TMDB_KEY;
+  const userSelectedLang = useSelector((state) => state.config.Lang);
+  const searchedMovies = useSelector((state) => state.gpt.searchedMovies);
 
-const handleSmartSearch = async (e) => {
-  e.preventDefault();
-  const query = SearchText.current?.value?.trim();
-  if (!query) {
-    // setRecommendations([]);
-    console.log('empty query');
-    return;
-  }
+  const currentLang = language[userSelectedLang];
 
-  console.log('search query:', query);
-  setTitle(query)
+  const SearchText = useRef(null);
 
-  try {
-    // run movie search
-    const searchRes = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${TMDB_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+  const TMDB_TOKEN = import.meta.env.VITE_TMDB_KEY;
 
-    const searchData = await searchRes.json();
+  const handleSmartSearch = async (e) => {
+    e.preventDefault();
 
-    if (!searchData.results || !searchData.results.length) {
-      console.log("No movie found");
-      // setRecommendations([]);
+    const query = SearchText.current?.value?.trim();
+
+    if (!query) {
+      console.log("empty query");
       return;
     }
-      console.log('searchData',searchData);
-      
-    const firstMovie = searchData.results[0];
-    console.log("Best match:", firstMovie.title);
 
-    // fetch similar movies
-    const similarRes = await fetch(
-      `https://api.themoviedb.org/3/movie/${firstMovie.id}/similar`,
-      {
-        headers: {
-          Authorization: `Bearer ${TMDB_TOKEN}`,
-          "Content-Type": "application/json",
-        },
+    setTitle(query);
+
+    try {
+      const searchRes = await fetch(
+        `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+          query
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${TMDB_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const searchData = await searchRes.json();
+
+      if (!searchData.results || !searchData.results.length) {
+        console.log("No movie found");
+        return;
       }
-    );
 
-    const similarData = await similarRes.json();
-    console.log('similarData',similarData);
-    
-    dispatch( AddSearchedMovies(similarData.results))
-    // setRecommendations(similarData.results );
-    return similarData.results ;
-  } catch (err) {
-    console.error(err);
-    // setRecommendations([]);
-  }
-};
-    
+      const firstMovie = searchData.results[0];
+
+      const similarRes = await fetch(
+        `https://api.themoviedb.org/3/movie/${firstMovie.id}/similar`,
+        {
+          headers: {
+            Authorization: `Bearer ${TMDB_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const similarData = await similarRes.json();
+
+      dispatch(AddSearchedMovies(similarData.results));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <div className='w-screen h-screen pt-20'>
-      <div className="pt-[2%] flex justify-center">
-        <form onSubmit={handleSmartSearch} className="w-1/2 bg-black grid grid-cols-12">
+    <div className="w-full min-h-screen pt-20 px-4">
+
+      {/* Search Bar */}
+      <div className="flex justify-center">
+        <form
+          onSubmit={handleSmartSearch}
+          className="
+          w-full 
+          sm:w-[90%] 
+          md:w-2/3 
+          lg:w-1/2
+          bg-black 
+          grid 
+          grid-cols-1 
+          sm:grid-cols-12 
+          rounded-lg
+          "
+        >
           <input
             ref={SearchText}
             type="text"
-            className="p-4 m-4 col-span-9 text-white bg-gray-800 rounded-l-lg"
+            className="
+            p-3 
+            sm:p-4 
+            m-2 
+            sm:m-4 
+            sm:col-span-9 
+            text-white 
+            bg-gray-800 
+            rounded-lg 
+            sm:rounded-l-lg
+            "
             placeholder={currentLang.input}
           />
-          <button className="col-span-3 m-4 py-2 px-4 bg-red-700 text-white rounded-lg" type='submit'>
+
+          <button
+            className="
+            sm:col-span-3 
+            m-2 
+            sm:m-4 
+            py-2 
+            px-4 
+            bg-red-700 
+            text-white 
+            rounded-lg
+            hover:bg-red-800
+            "
+            type="submit"
+          >
             {currentLang.lang}
           </button>
         </form>
       </div>
 
-      {/* render recommendation list
-      {recommendations.length > 0 && (
-        <div className="mt-6 w-1/2 mx-auto bg-gray-900 p-4 text-white rounded">
-          <h2 className="text-xl mb-2">Recommendations</h2>
-          <ul>
-            {recommendations.map((movie) => (
-              <li key={movie.id}>{movie.title}</li>
-            ))}
-          </ul>
-          
-        </div>
-      )} */}
-      { searchedMovies?(<MovieList title={title} movies = {searchedMovies}/>):null }
+      {/* Movie Results */}
+      <div className="mt-6">
+        {searchedMovies ? (
+          <MovieList title={title} movies={searchedMovies} />
+        ) : null}
+      </div>
     </div>
   );
 };
