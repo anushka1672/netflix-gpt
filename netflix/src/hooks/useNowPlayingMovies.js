@@ -14,7 +14,7 @@ export const useNowPlayingMovies = () => {
         }
     
         const data = await response.json();
-        console.log("omdb data",data);
+        // console.log("omdb data",data);
         dispatch(addNowPlayingMovies(data.results));
     
         

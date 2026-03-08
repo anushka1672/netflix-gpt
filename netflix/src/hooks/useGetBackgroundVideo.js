@@ -16,7 +16,7 @@ export const useGetBackgroundVideo= (videoId)=>{
         const data = await res.json();
         // console.log("ye VideoBackground ka data h jisme v h",data);
         const moviesVideos = data.results;
-        console.log(moviesVideos);
+        // console.log(moviesVideos);
        const trailerData =  moviesVideos.filter((movie)=>movie.type === "Trailer")
        const trailer = trailerData[0]
        dispatch(addTrailerId(trailer))

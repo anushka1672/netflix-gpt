@@ -59,7 +59,7 @@ import { useSelector } from 'react-redux';
 export default function VideoBackground ({ videoId }) {
   // console.log("this is a videobackground container",videoId);
    const  movieTrailor = useSelector((store) => store.movies.trailerId);
-   console.log(movieTrailor,"movieTrailor");
+  //  console.log(movieTrailor,"movieTrailor");
    
   
 

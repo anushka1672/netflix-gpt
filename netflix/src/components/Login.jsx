@@ -38,7 +38,7 @@ export default function Login() {
            }).then(() => {
                 const {uid, email, displayName,photoURL} = auth.currentUser;
                    dispatch(addUser({uid:uid,email:email,displayName:displayName,photoURL:photoURL})); 
-              console.log(user);
+              // console.log(user);
               navigate("/browse") 
  
           }).catch((error) => {
@@ -55,7 +55,7 @@ export default function Login() {
         .then((userCredential) => {
           
           const user = userCredential.user;
-          console.log(user);
+          // console.log(user);
           navigate("/browse") 
         })
         .catch((error) => {

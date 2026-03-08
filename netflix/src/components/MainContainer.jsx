@@ -25,7 +25,7 @@ const MainContainer = () => {
     <div className="flex flex-col">
       <VideoBackground videoId={id}/>
       <VideoTitle  title =  { title} overview={ overview }/>
-      <SecondaryContainer/>
+      
     </div>
   );
 };

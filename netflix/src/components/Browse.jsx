@@ -4,26 +4,29 @@ import { useNavigate } from "react-router-dom";
 import { useNowPlayingMovies } from "../hooks/useNowPlayingMovies";
 import { useSelector } from "react-redux";
 import MainContainer from "./MainContainer";
+import GptSearch from "./GptSearchPage";
+import SecondaryContainer from "./SecondaryContainer";
 
 export default function Browse() {
   useNowPlayingMovies();
 
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const showGptSearch = useSelector((state) => state.gpt.showGptSearch);
 
   useEffect(() => {
     if (!user) {
       navigate("/");
     }
-  });
+  },[user]);
 
   return (
     <div>
       <Header />
-
-      <MainContainer/>
-
-     
+     {showGptSearch ?<GptSearch/>:<div>
+       <MainContainer/>
+       <SecondaryContainer/>
+     </div>}
     </div>
   );
 }
